@@ -1,18 +1,20 @@
 ```
-# Data files
-data/features/*.parquet
-data/raw/*.parquet
+# Model and data artifacts
+data/model_releases/*.pkl
+data/model_releases/*.json
+data/model_releases/*.png
 
 # Dependencies
 .venv/
 venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.mypy_cache/
 
 # Logs and temp files
 *.log
 *.tmp
-*.swp
 
 # Environment
 .env
@@ -22,13 +24,4 @@ __pycache__/
 # Editors
 .vscode/
 .idea/
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# Python cache
-.mypy_cache/
-.pytest_cache/
 ```

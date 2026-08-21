@@ -61,14 +61,17 @@ class MLTrainer:
         """
         self.df = df.copy()
 
-        # بررسی وجود ستون timestamp یا داشتن ایندکس Datetime
+        # بررسی وجود ستون timestamp یا time یا داشتن ایندکس Datetime
         if "timestamp" in self.df.columns:
             # اطمینان از نوع datetime
             self.df["timestamp"] = pd.to_datetime(self.df["timestamp"])  # type: ignore
+        elif "time" in self.df.columns:
+            # تبدیل ستون time به timestamp برای سازگاری
+            self.df["timestamp"] = pd.to_datetime(self.df["time"], unit='s')  # type: ignore
         else:
             # اگر ایندکس از نوع DatetimeIndex است، آن را به ستون timestamp منتقل نمی‌کنیم ولی purged_kfold از ایندکس استفاده خواهد کرد
             if not isinstance(self.df.index, pd.DatetimeIndex):
-                raise ValueError("DataFrame must contain a 'timestamp' column or have a DatetimeIndex")
+                raise ValueError("DataFrame must contain a 'timestamp' or 'time' column or have a DatetimeIndex")
 
         # ستون‌های غیر فیچر که باید حذف شوند (در صورت وجود)
         non_feature_cols = ["timestamp", "t1", "barrier_type", "open", "high", "low", "close", "volume"]

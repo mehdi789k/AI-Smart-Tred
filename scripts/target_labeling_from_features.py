@@ -20,17 +20,26 @@ def load_dataset(path: str | Path) -> pd.DataFrame:
     """Load a parquet dataset and normalize the timestamp column when needed."""
     df = pd.read_parquet(path)
     if "datetime" in df.columns:
-        df = df.rename(columns={"datetime": "timestamp"})
-    if "time" in df.columns:
-        df = df.rename(columns={"time": "timestamp"})
+        df = df.rename(columns={"datetime": "time"})
+    
+    # Ensure we have 'time' column (our standard)
+    if "timestamp" in df.columns and "time" not in df.columns:
+        df = df.rename(columns={"timestamp": "time"})
 
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    if "time" in df.columns:
+        # Convert to datetime if it's numeric (unix timestamp)
+        if pd.api.types.is_numeric_dtype(df["time"]):
+            df["time"] = pd.to_datetime(df["time"], unit='s', errors="coerce")
+        else:
+            df["time"] = pd.to_datetime(df["time"], errors="coerce")
 
     if "close" not in df.columns:
         raise ValueError("Input dataset must contain a 'close' column for target generation.")
+    
+    if "high" not in df.columns or "low" not in df.columns:
+        raise ValueError("Input dataset must contain 'high' and 'low' columns for triple-barrier labeling.")
 
-    return df.sort_values("timestamp").reset_index(drop=True)
+    return df.sort_values("time").reset_index(drop=True)
 
 
 def generate_targets(
