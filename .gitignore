@@ -1,49 +1,36 @@
 ```
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-*.o
-*.obj
-*.so
-*.dylib
-*.dll
-*.exe
-*.out
+# Data files
+data/raw/*.parquet
+data/features/*.parquet
 
-# Dependencies
-.venv/
-venv/
-env/
+# Environment
 .env
 .env.local
 *.env.*
 
-# Build directories
-build/
-dist/
-*.egg-info/
-target/
-.gradle/
+# Dependencies
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Testing and coverage
-.coverage
-coverage/
-htmlcov/
-.pytest_cache/
-.mypy_cache/
-.hypothesis/
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
 
-# Editors and IDEs
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-*.tmp
 
 # OS generated files
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Build artifacts
+dist/
+build/
+*.egg-info/
 ```
