@@ -50,15 +50,15 @@ class FeatureEngine:
         # MACD (12,26,9)
         macd_df = ta.macd(out["close"], fast=12, slow=26, signal=9)
         if isinstance(macd_df, pd.DataFrame):
-            # standard pandas_ta returns DataFrame with MACD_12_26_9 etc.
+            # standard pandas_ta returns DataFrame with MACD_12_26_9, MACDh_12_26_9, MACDs_12_26_9
             # normalize to short names
             for col in macd_df.columns:
                 lname = col.lower()
-                if "macd" in lname and "signal" not in lname and "hist" not in lname:
+                if "macd" in lname and "s_" not in lname and "h" not in lname:
                     out["macd"] = macd_df[col]
-                elif "signal" in lname:
+                elif "macds" in lname or ("signal" in lname and "macd" not in lname):
                     out["macd_signal"] = macd_df[col]
-                elif "hist" in lname or "histo" in lname:
+                elif "macdh" in lname or "hist" in lname or "histo" in lname:
                     out["macd_hist"] = macd_df[col]
         elif isinstance(macd_df, pd.Series):
             out["macd"] = macd_df
@@ -120,7 +120,7 @@ class FeatureEngine:
         if column not in df.columns:
             raise KeyError(f"Column '{column}' not found in DataFrame")
 
-        series = df[column].astype(float).fillna(method="ffill").fillna(method="bfill")
+        series = df[column].astype(float).ffill().bfill()
         n = len(series)
         size = min(window, n)
 
@@ -141,5 +141,5 @@ class FeatureEngine:
             result.index = series.index[(size - 1) :]
 
         # Ensure no NaNs remain
-        result = result.fillna(method="ffill").fillna(method="bfill")
+        result = result.ffill().bfill()
         return result

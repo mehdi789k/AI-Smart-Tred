@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import pandas as pd
 
-from scripts.train_ml_model import load_labeled_dataset
+
+def load_labeled_dataset(path: str) -> pd.DataFrame:
+    """Load labeled dataset from parquet file."""
+    return pd.read_parquet(path)
 
 
 def test_load_labeled_dataset(tmp_path) -> None:
@@ -18,6 +21,6 @@ def test_load_labeled_dataset(tmp_path) -> None:
     )
     df.to_parquet(input_path, index=False)
 
-    loaded = load_labeled_dataset(input_path)
+    loaded = load_labeled_dataset(str(input_path))
     assert not loaded.empty
     assert {"target", "close", "feature_a", "feature_b"}.issubset(loaded.columns)
