@@ -1,0 +1,19 @@
+[
+  "time",
+  "tick_volume",
+  "rsi_14",
+  "macd",
+  "macd_hist",
+  "macd_signal",
+  "bb_lower",
+  "bb_middle",
+  "bb_upper",
+  "bbb_20_2.0_2.0",
+  "bbp_20_2.0_2.0",
+  "atr_14",
+  "ret",
+  "vol_roll_20",
+  "skew_roll_20",
+  "kurt_roll_20",
+  "rt"
+]

@@ -5,6 +5,8 @@ import sqlite3
 import pandas as pd
 import pytest
 
+pytest_plugins = ("pytest_asyncio",)
+
 from smarttred.data_pipeline.realtime_pipeline import AsyncMT5StreamPipeline
 
 

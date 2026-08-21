@@ -5,7 +5,7 @@ from smarttred.features.target_labeling import generate_labels_from_features
 
 
 def test_generate_labels_basic():
-    rng = pd.date_range(end=pd.Timestamp.now(), periods=50, freq='T')
+    rng = pd.date_range(end=pd.Timestamp.now(), periods=50, freq='min')
     open = np.linspace(1.0, 1.05, 50) + np.random.randn(50)*0.0003
     high = open + np.abs(np.random.rand(50)*0.001)
     low = open - np.abs(np.random.rand(50)*0.001)

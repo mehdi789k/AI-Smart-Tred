@@ -65,10 +65,10 @@ def triple_barrier_labels(
     ('tp','sl','time'), and rt_col (realized return at barrier touch; NaN if
     could not be computed).
     """
-    if not set(["timestamp", high_col, low_col, close_col]).issubset(df.columns):
-        raise ValueError(f"DataFrame must contain timestamp, {high_col}, {low_col}, {close_col} columns")
+    if not set(["time", high_col, low_col, close_col]).issubset(df.columns):
+        raise ValueError(f"DataFrame must contain time, {high_col}, {low_col}, {close_col} columns")
 
-    out = df.copy().sort_values("timestamp").reset_index(drop=True)
+    out = df.copy().sort_values("time").reset_index(drop=True)
     n = len(out)
     if n == 0:
         return out
@@ -76,6 +76,7 @@ def triple_barrier_labels(
     high = out[high_col].to_numpy(dtype=float)
     low = out[low_col].to_numpy(dtype=float)
     close = out[close_col].to_numpy(dtype=float)
+    timestamp = out["time"].to_numpy(dtype=float)
 
     if use_atr:
         atr = _compute_atr(high, low, close, period=atr_period)
@@ -232,4 +233,14 @@ def triple_barrier_labels(
     out[label_col] = targets
     out[barrier_col] = barrier_type
     out[rt_col] = rt
+    
+    # Add t1 column (end timestamp of label window) for Purged K-Fold
+    # t1 = time + time_limit bars ahead
+    # Handle both numeric timestamps and datetime objects
+    if pd.api.types.is_numeric_dtype(out["time"]):
+        out["t1"] = out["time"] + (time_limit * 60)  # assuming 1-minute bars (60 seconds)
+    else:
+        # For datetime columns, use timedelta
+        out["t1"] = out["time"] + pd.to_timedelta(time_limit, unit='m')
+    
     return out

@@ -6,7 +6,7 @@ from smarttred.features.data_split import time_split
 def test_time_split_basic():
     df = pd.DataFrame(
         {
-            'timestamp': pd.date_range('2024-01-01', periods=20, freq='H'),
+            'timestamp': pd.date_range('2024-01-01', periods=20, freq='h'),
             'close': range(20),
             'label_1': [0, 1] * 10,
         }

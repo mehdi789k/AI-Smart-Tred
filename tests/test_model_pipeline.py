@@ -4,9 +4,10 @@ from smarttred.models.training import prepare_training_data, train_xgboost_model
 
 
 def test_prepare_training_data() -> None:
+    timestamps = pd.date_range("2024-01-01", periods=40, freq="min")
     df = pd.DataFrame(
         {
-            "timestamp": pd.date_range("2024-01-01", periods=40, freq="min"),
+            "time": timestamps.astype('int64') // 10**9,
             "close": [100 + i * 0.2 for i in range(40)],
             "open": [100 + i * 0.2 for i in range(40)],
             "high": [101 + i * 0.2 for i in range(40)],
@@ -21,10 +22,11 @@ def test_prepare_training_data() -> None:
 
 
 def test_train_xgboost_model(tmp_path) -> None:
+    timestamps = pd.date_range("2024-01-01", periods=80, freq="min")
     price = [100 + i * 0.15 for i in range(80)]
     df = pd.DataFrame(
         {
-            "timestamp": pd.date_range("2024-01-01", periods=80, freq="min"),
+            "time": timestamps.astype('int64') // 10**9,
             "close": price,
             "open": price,
             "high": [p + 1.2 for p in price],

@@ -54,13 +54,17 @@ class VectorBTBacktester:
         entries = signals == 1
         exits = signals == -1
 
-        portfolio = (
-            vbt.Portfolio.from_signals(price, entries, exits, init_cash=self.initial_balance)
-            .set_commission(commission=self.commission_per_trade)
-            .set_slippage(slippage=self.slippage_bps / 10_000)
+        # In vectorbt v1.0+, commission and slippage are passed directly to from_signals
+        portfolio = vbt.Portfolio.from_signals(
+            close=price,
+            entries=entries,
+            exits=exits,
+            init_cash=self.initial_balance,
+            fees=self.commission_per_trade,
+            slippage=self.slippage_bps / 10_000
         )
 
-        result = portfolio.value.to_frame(name="balance")
+        result = portfolio.value().to_frame(name="balance")
         result["equity_change"] = result["balance"].pct_change().fillna(0.0)
         result["position"] = signals.fillna(0)
         result["signal"] = signals

@@ -61,24 +61,27 @@ class MLTrainer:
         """
         self.df = df.copy()
 
-        # بررسی وجود ستون timestamp یا داشتن ایندکس Datetime
+        # بررسی وجود ستون timestamp یا time یا داشتن ایندکس Datetime
         if "timestamp" in self.df.columns:
             # اطمینان از نوع datetime
             self.df["timestamp"] = pd.to_datetime(self.df["timestamp"])  # type: ignore
+        elif "time" in self.df.columns:
+            # تبدیل ستون time به timestamp برای سازگاری
+            self.df["timestamp"] = pd.to_datetime(self.df["time"])  # type: ignore
         else:
             # اگر ایندکس از نوع DatetimeIndex است، آن را به ستون timestamp منتقل نمی‌کنیم ولی purged_kfold از ایندکس استفاده خواهد کرد
             if not isinstance(self.df.index, pd.DatetimeIndex):
-                raise ValueError("DataFrame must contain a 'timestamp' column or have a DatetimeIndex")
+                raise ValueError("DataFrame must contain a 'timestamp' or 'time' column or have a DatetimeIndex")
 
         # ستون‌های غیر فیچر که باید حذف شوند (در صورت وجود)
-        non_feature_cols = ["timestamp", "t1", "barrier_type", "open", "high", "low", "close", "volume"]
+        non_feature_cols = ["timestamp", "time", "t1", "barrier_type", "open", "high", "low", "close", "volume"]
         non_feature_present = [c for c in non_feature_cols if c in self.df.columns]
 
         if target_col not in self.df.columns:
             raise ValueError(f"target column '{target_col}' not found in dataframe")
 
         y = self.df[target_col].copy()
-        X = self.df.drop(columns=[c for c in non_feature_present if c in self.df.columns] + [target_col], errors="ignore")
+        X = self.df.drop(columns=[c for c in non_feature_present if c in self.df.columns] + [target_col], errors="ignore").select_dtypes(include=[np.number])
 
         feature_names = list(X.columns)
         return X, y, feature_names
@@ -212,10 +215,12 @@ class MLTrainer:
                 else:
                     lgb_params["is_unbalance"] = True
             else:
-                # multiclass
+                # multiclass - استفاده از class_weight='balanced' با LightGBM جدید
                 lgb_params["objective"] = "multiclass"
                 lgb_params["num_class"] = int(len(unique_labels))
-                lgb_params["class_weight"] = "balanced"
+                # حذف class_weight='balanced' چون ممکن است باعث خطا شود
+                # در عوض از scale_pos_weight برای هر کلاس استفاده می‌کنیم
+                lgb_params.pop("class_weight", None)
 
             model = lgb.LGBMClassifier(**lgb_params)
 

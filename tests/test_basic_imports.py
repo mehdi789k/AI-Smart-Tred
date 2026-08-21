@@ -10,15 +10,19 @@ def test_imports_load() -> None:
 def test_feature_engine_on_synthetic_data() -> None:
     import pandas as pd
 
-    times = pd.date_range("2024-01-01", periods=80, freq="min")
+    # Need at least 200 rows to accommodate lookback windows:
+    # - RSI(14), MACD(12,26,9), BBANDS(20) => ~30 rows lost
+    # - Rolling stats (window=20) => ~20 more rows lost  
+    # - Fractional diff (window=100) => ~100 rows lost
+    times = pd.date_range("2024-01-01", periods=250, freq="min")
     data = pd.DataFrame(
         {
             "timestamp": times,
-            "open": 100 + pd.Series(range(80), dtype=float) / 10,
-            "high": 101 + pd.Series(range(80), dtype=float) / 10,
-            "low": 99 + pd.Series(range(80), dtype=float) / 10,
-            "close": 100.5 + pd.Series(range(80), dtype=float) / 10,
-            "volume": 1000 + pd.Series(range(80), dtype=float),
+            "open": 100 + pd.Series(range(250), dtype=float) / 10,
+            "high": 101 + pd.Series(range(250), dtype=float) / 10,
+            "low": 99 + pd.Series(range(250), dtype=float) / 10,
+            "close": 100.5 + pd.Series(range(250), dtype=float) / 10,
+            "volume": 1000 + pd.Series(range(250), dtype=float),
         }
     )
 

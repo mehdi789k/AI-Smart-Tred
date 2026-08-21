@@ -6,7 +6,7 @@ from smarttred.features.feature_engine import FeatureEngine
 
 def test_feature_engine_basic():
     # Create simple synthetic OHLCV
-    rng = pd.date_range(end=pd.Timestamp.now(), periods=60, freq='T')
+    rng = pd.date_range(end=pd.Timestamp.now(), periods=60, freq='min')
     open = np.linspace(1.0, 1.1, 60) + np.random.randn(60) * 0.0005
     high = open + np.abs(np.random.rand(60) * 0.001)
     low = open - np.abs(np.random.rand(60) * 0.001)
