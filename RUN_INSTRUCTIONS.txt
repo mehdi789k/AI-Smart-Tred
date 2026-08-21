@@ -1,0 +1,31 @@
+Quick run instructions (Windows PowerShell) for the AI-Smart-Tred feature pipeline
+
+Prerequisites:
+- Install Python 3.11+ from https://www.python.org if not already installed.
+- From the project root, create and activate a virtualenv:
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+- Install required packages:
+    pip install --upgrade pip
+    pip install pandas pyarrow pandas-ta scipy duckdb
+
+Run feature engineering (auto-discovery allowed):
+- If you have a raw Parquet at data/raw/<file>.parquet:
+    python scripts\feature_engineering_from_parquet.py --input data\raw\<file>.parquet --output data\features\<file>_features.parquet
+- Or let the script auto-discover the first Parquet under data/raw/:
+    python scripts\feature_engineering_from_parquet.py
+
+Run label generation (auto-discovery allowed):
+- If you have features at data/features/<file>_features.parquet:
+    python scripts\generate_labels_from_features.py --input data\features\<file>_features.parquet --output data\features\<file>_labeled.parquet
+- Or let the script auto-discover the first features file under data/features/:
+    python scripts\generate_labels_from_features.py
+
+Run tests (if pytest is installed):
+    pip install pytest
+    pytest -q
+
+Notes:
+- The environment in which these edits were made didn't have Python installed, so I couldn't run the tests or execute the scripts here. The code changes were made in the repository and are ready to run on your machine or CI that has Python and the listed dependencies.
+- For large-scale appends/merges use DuckDB (duckdb package) — a helper is included at smarttred/data_pipeline/duckdb_merge.py.
+- If you want me to run the pipeline on a specific file, provide the absolute or repo-relative path and I will attempt to run it (provided Python is available in the environment).

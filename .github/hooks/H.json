@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "errorOccurred": [
+      {
+        "type": "command",
+        "powershell": "Write-Host 'Error in AI-Smart-Tred session - Check MT5 connection and Python environment'"
+      }
+    ]
+  }
+}

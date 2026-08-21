@@ -1,0 +1,10 @@
+{
+	"hooks": {
+		"SubagentStop": [
+			{
+				"type": "command",
+				"command": ""
+			}
+		]
+	}
+}

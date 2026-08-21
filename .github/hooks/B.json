@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "echo 'Processing request for AI-Smart-Tred project'"
+      }
+    ]
+  }
+}

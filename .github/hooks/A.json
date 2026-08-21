@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "echo 'Starting AI-Smart-Tred development session - Python ML Trading System'"
+      }
+    ]
+  }
+}

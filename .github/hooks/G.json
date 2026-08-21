@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionEnd": [
+      {
+        "type": "command",
+        "powershell": "Write-Host 'AI-Smart-Tred session completed - Happy Trading!'"
+      }
+    ]
+  }
+}
