@@ -14,10 +14,11 @@ class FeatureEngine:
     - add_technical_indicators: adds RSI(14), MACD, BBANDS, ATR using pandas_ta
     - compute_statistical_features: rolling volatility, skewness, kurtosis
     - fractional_differentiation: Marcos Lopez de Prado fractional differentiation
+    - transform: full pipeline transformation with configurable frac_diff_order
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, frac_diff_order: float = 0.5) -> None:
+        self.frac_diff_order = frac_diff_order
 
     def add_technical_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
         """Add common technical indicators using pandas_ta.
@@ -143,3 +144,48 @@ class FeatureEngine:
         # Ensure no NaNs remain
         result = result.ffill().bfill()
         return result
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Full feature engineering pipeline.
+        
+        Applies technical indicators, statistical features, and fractional differentiation.
+        
+        Returns a DataFrame with columns:
+        - Original OHLCV columns
+        - Technical indicators (rsi_14, macd, macd_signal, macd_hist, bb_lower, bb_middle, bb_upper, atr_14)
+        - Statistical features (ret, vol_roll_20, skew_roll_20, kurt_roll_20)
+        - Fractional differentiated columns (close_fd_{d}, returns_fd_{d})
+        """
+        if df is None or df.empty:
+            return df
+        
+        # Step 1: technical indicators
+        df_ind = self.add_technical_indicators(df)
+        
+        # Step 2: rolling statistical features
+        df_stats = self.compute_statistical_features(df_ind, window=20)
+        
+        # Step 3: fractional differentiation on close
+        d = self.frac_diff_order
+        fd_close = self.fractional_differentiation(df_stats, column="close", d=d, window=100)
+        
+        # Align dataframe to fd index
+        df_final = df_stats.loc[fd_close.index].copy()
+        fd_col_name = f"close_fd_{d}".replace(".", "_")
+        df_final[fd_col_name] = fd_close.values
+        
+        # Add fractional differentiated returns
+        ret_fd = fd_close.pct_change()
+        ret_fd_col_name = f"returns_fd_{d}".replace(".", "_")
+        df_final[ret_fd_col_name] = ret_fd.values
+        
+        # Add simple returns column for compatibility
+        if "returns" not in df_final.columns and "ret" in df_final.columns:
+            df_final["returns"] = df_final["ret"]
+        
+        # Add SMA_10 for compatibility
+        if "sma_10" not in df_final.columns:
+            df_final["sma_10"] = df_final["close"].rolling(10).mean()
+        
+        df_final = df_final.dropna().reset_index(drop=True)
+        return df_final

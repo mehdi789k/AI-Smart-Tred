@@ -8,6 +8,8 @@ def test_triple_barrier_labels_profit() -> None:
     df = pd.DataFrame({
         "timestamp": pd.date_range("2024-01-01", periods=len(price), freq="min"),
         "close": price,
+        "high": [p * 1.002 for p in price],  # Add high column
+        "low": [p * 0.998 for p in price],   # Add low column
     })
 
     result = triple_barrier_labels(df, profit_taker=0.01, stop_loss=0.005, time_limit=3)
@@ -19,6 +21,8 @@ def test_triple_barrier_labels_loss() -> None:
     df = pd.DataFrame({
         "timestamp": pd.date_range("2024-01-01", periods=len(price), freq="min"),
         "close": price,
+        "high": [p * 1.002 for p in price],  # Add high column
+        "low": [p * 0.998 for p in price],   # Add low column
     })
 
     result = triple_barrier_labels(df, profit_taker=0.01, stop_loss=0.005, time_limit=3)

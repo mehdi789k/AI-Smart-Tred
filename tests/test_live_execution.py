@@ -120,6 +120,7 @@ def test_place_risk_managed_order(fake_executor):
 
 def test_connect_raises_on_failed_init(monkeypatch):
     import smarttred.trading.live_execution as live_module
+    from smarttred.config.settings import Settings
 
     class FailingMT5:
         @staticmethod
@@ -131,6 +132,14 @@ def test_connect_raises_on_failed_init(monkeypatch):
             return "bad-init"
 
     monkeypatch.setattr(live_module, "mt5", FailingMT5)
-    executor = MT5OrderExecutor(settings=None)
+    
+    # Provide mock settings to avoid validation error
+    mock_settings = Settings(
+        mt5_terminal_path="/fake/path",
+        mt5_login=12345,
+        mt5_password="fake_password",
+        mt5_server="fake_server",
+    )
+    executor = MT5OrderExecutor(settings=mock_settings)
     with pytest.raises(ConnectionError):
         executor.connect()

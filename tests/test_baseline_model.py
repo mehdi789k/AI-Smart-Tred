@@ -15,7 +15,9 @@ def test_prepare_model_matrix_and_training():
     })
 
     X, y = prepare_model_matrix(df, target_col='label_5')
-    assert list(X.columns) == ['feature_a', 'feature_b']
+    # prepare_model_matrix keeps all numeric columns except timestamp and target
+    expected_features = ['close', 'feature_a', 'feature_b']
+    assert set(X.columns) == set(expected_features)
     assert len(X) == len(y)
 
     trainer = BaselineModelTrainer(model_name='logistic')
