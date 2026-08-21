@@ -1,27 +1,49 @@
 ```
-# Model and data artifacts
-data/model_releases/*.pkl
-data/model_releases/*.json
-data/model_releases/*.png
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
 
 # Dependencies
 .venv/
 venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-.mypy_cache/
-
-# Logs and temp files
-*.log
-*.tmp
-
-# Environment
+env/
 .env
 .env.local
 *.env.*
 
-# Editors
+# Build directories
+build/
+dist/
+*.egg-info/
+target/
+.gradle/
+
+# Testing and coverage
+.coverage
+coverage/
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
+# Editors and IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 ```

@@ -5,7 +5,7 @@ from smarttred.models.baseline_model import BaselineModelTrainer, prepare_model_
 
 
 def test_prepare_model_matrix_and_training():
-    rng = pd.date_range(end=pd.Timestamp.now(), periods=50, freq='T')
+    rng = pd.date_range(end=pd.Timestamp.now(), periods=50, freq='min')
     df = pd.DataFrame({
         'timestamp': rng,
         'close': np.linspace(100, 120, 50),
